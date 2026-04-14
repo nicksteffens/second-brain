@@ -1,0 +1,7 @@
+{
+  "userIgnoreFilters": [
+    "site/node_modules/",
+    "site/dist/",
+    "scripts/node_modules/"
+  ]
+}

@@ -1,13 +1,13 @@
 ---
-title: "<% tp.file.cursor(1) %>"
+title: ""
 date: <% tp.date.now("YYYY-MM-DD") %>
-session: <% tp.file.cursor(2) %>
-duration: "<% tp.file.cursor(3) %>"
-rating: <% tp.file.cursor(4) %>
-objective: "<% tp.file.cursor(5) %>"
+session: 1
+duration: ""
+rating: 
+objective: ""
 repos: []
 tags: []
-role: "<% tp.file.cursor(6) %>"
+role: ""
 shortcut: ""
 wins: []
 improvements: []
