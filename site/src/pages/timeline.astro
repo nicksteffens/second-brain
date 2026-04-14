@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const allDocs = await getCollection('docs');
+const sessions = allDocs
+  .filter(entry => entry.data.rating !== undefined)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<StarlightPage frontmatter={{ title: 'Timeline', description: 'All sessions in reverse chronological order' }}>
+  <div class="timeline">
+    {sessions.map(session => (
+      <article class="timeline-entry">
+        <div class="timeline-meta">
+          <time>{session.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+          <span class="rating">{'*'.repeat(Math.min(Math.round(session.data.rating / 2), 5))}</span>
+          <span class="duration">{session.data.duration}</span>
+        </div>
+        <h3>
+          <a href={`/second-brain/${session.id}/`}>{session.data.title}</a>
+        </h3>
+        <p class="objective">{session.data.objective}</p>
+        {session.data.repos?.length > 0 && (
+          <div class="repos">
+            {session.data.repos.map(repo => <span class="chip">{repo}</span>)}
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+</StarlightPage>
+
+<style>
+  .timeline { display: flex; flex-direction: column; gap: 1.5rem; }
+  .timeline-entry { border-left: 3px solid var(--sl-color-accent); padding-left: 1rem; }
+  .timeline-meta { display: flex; gap: 1rem; font-size: 0.875rem; color: var(--sl-color-gray-2); }
+  .objective { color: var(--sl-color-gray-3); margin: 0.25rem 0; }
+  .repos { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .chip { font-size: 0.75rem; padding: 0.125rem 0.5rem; border-radius: 1rem; background: var(--sl-color-gray-6); color: var(--sl-color-gray-1); }
+</style>

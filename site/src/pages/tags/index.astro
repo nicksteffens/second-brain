@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+const allDocs = await getCollection('docs');
+const sessions = allDocs.filter(entry => entry.data.tags?.length > 0);
+
+const tagCounts = new Map<string, number>();
+for (const session of sessions) {
+  for (const tag of session.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  }
+}
+const sortedTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<StarlightPage frontmatter={{ title: 'Tags', description: 'Browse sessions by topic' }}>
+  <div class="tag-cloud">
+    {sortedTags.map(([tag, count]) => (
+      <a href={`/second-brain/tags/${tag}/`} class="tag-chip">
+        {tag} <span class="count">({count})</span>
+      </a>
+    ))}
+  </div>
+</StarlightPage>
+
+<style>
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .tag-chip {
+    padding: 0.375rem 0.75rem;
+    border-radius: 1rem;
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-1);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+  }
+  .tag-chip:hover { background: var(--sl-color-accent); color: var(--sl-color-white); }
+  .count { color: var(--sl-color-gray-3); }
+</style>

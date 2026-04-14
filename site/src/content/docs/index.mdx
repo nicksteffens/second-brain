@@ -1,0 +1,30 @@
+---
+title: Second Brain
+description: Session logs and knowledge base by Nick Steffens
+template: splash
+hero:
+  title: Second Brain
+  tagline: A record of AI-assisted development — session by session, insight by insight.
+  actions:
+    - text: Browse Sessions
+      link: /second-brain/timeline/
+      icon: right-arrow
+---
+
+import { getCollection } from 'astro:content';
+import StatsCard from '../../components/StatsCard.astro';
+
+export const sessions = await getCollection('docs', (entry) => entry.data.rating !== undefined);
+export const totalSessions = sessions.length;
+export const avgRating = (sessions.reduce((sum, s) => sum + (s.data.rating || 0), 0) / totalSessions).toFixed(1);
+export const allRepos = [...new Set(sessions.flatMap(s => s.data.repos || []))];
+export const dateRange = sessions.length > 0
+  ? `${sessions.sort((a, b) => new Date(a.data.date).getTime() - new Date(b.data.date).getTime())[0].data.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} — ${sessions[sessions.length - 1].data.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`
+  : '';
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <StatsCard label="Total Sessions" value={totalSessions} />
+  <StatsCard label="Avg Rating" value={`${avgRating}/10`} />
+  <StatsCard label="Repos" value={allRepos.length} />
+  <StatsCard label="Date Range" value={dateRange} />
+</div>
